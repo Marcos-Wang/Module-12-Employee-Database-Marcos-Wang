@@ -71,7 +71,7 @@ const viewEmployees = () => {
       
         if (err) {
     
-            throw err
+            throw err;
       
         } else {
     
@@ -99,7 +99,7 @@ const viewRoles = () => {
     
         if (err) {
     
-            throw err
+            throw err;
     
         } else {
     
@@ -123,7 +123,7 @@ const viewDepts = () => {
     
         if ((err)) {
     
-            throw err
+            throw err;
     
         } else {
 
@@ -141,26 +141,265 @@ const viewDepts = () => {
 
 const addEmployee = () => {
 
+    let roleQuery = "SELECT * FROM role";
+
+    db.query(viewRolesQuery, (err, res) => {
+
+        if (err){
+            throw err;
+        } else{
+
+            const roles = res.map(role => role.title);
 
 
-}
+            const managerQuery =  'SELECT * FROM employee';
+
+            db.query(viewRolesQuery, (err, manRes) => {
+
+                if (err){
+                    throw err;
+                } else{
+        
+                    const managers = manRes.map(employee => employee.first_name);
+
+                    inquirer.prompt([
+                        {
+                            type: "input",
+                            name: "firstName",
+                            message: "Input employee first name: ",
+                            valdate: firstName => {
+                               
+                                if (firstName) {
+                               
+                                    return true;
+                               
+                                } else {
+                               
+                                    console.log('Invalid first name.');
+                               
+                                    return false;
+
+                                }
+                            }
+                        }, 
+                        {
+                            type: "input",
+                            name: "lastName",
+                            message: "Input employee last name: ",
+                            valdate: lastName => {
+                               
+                                if (lastName) {
+                               
+                                    return true;
+                               
+                                } else {
+                               
+                                    console.log('Invalid last name.');
+                               
+                                    return false;
+
+                                }
+                            }
+                        },
+                        {
+                            type: 'list',
+                            name: 'role',
+                            message: "Assign employee's role: ",
+                            choices: roles
+                        },
+                        {
+                            type: 'list',
+                            name: 'manager',
+                            message: "Assign employee's manager: ",
+                            choices: managers
+                        }
+
+                    ]).then ((answers) => {
+                        const { firstName, lastName, role, manager } = answers;
+                        const insertEmployeeQuery = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)';
+
+                        const roleID = res.find(result => result.title === role).id;                        
+                        const managerID = manRes.find(result => result.first_name === manager).id;
+                        
+                        const values = [firstName, lastName, roleID, managerID];
+
+                        db.query(insertEmployeeQuery, values, (err, insertResult) => {
+                        
+                            if (err) {
+                        
+                                throw err;
+                        
+                            } else {
+                        
+                                console.log(`${firstName} ${lastName} added to employee database.`);
+                        
+
+                                viewEmployees();
+                        
+                            }
+                       
+                        });
+                    
+                    });
+    
+                }
+            });
+
+        }
+
+    });
+
+};
 
 const updateEmployee = () => {
 
 
 
-}
+};
 
 const addRole = () => {
 
+    let viewDeptsQuery = 'SELECT * FROM department';
 
+    db.query(viewDeptsQuery, (err, deptResults) => {
+        
+        if (err) {
+        
+            throw err
+        
+        } else {
 
-}
+        
+            const deptArray = deptResults.map(department => department.name);
+        
+            inquirer.prompt([
+                {
+                    type: 'input',
+                    name: 'roleName',
+                    message: 'Input role name: ',
+                    validate: roleName => {
+                    
+                        if (roleName) {
+                    
+                            return true;
+                    
+                        } else {
+                    
+                            console.log('Invalid role name.');
+                    
+                            return false;
+                    }
+                    }
+                },
+                {
+                    type: 'input',
+                    name: 'salary',
+                    message: 'Input job role salary: ',
+                    validate: salary => {
+                    
+                        if (salary) {
+                    
+                            return true;
+                    
+                        } else {
+                    
+                            console.log('Invalid salary.');
+                    
+                            return false;
+                    
+                        }
+                    
+                    }
+                }, 
+                {
+                    type: 'list',
+                        name: 'dept',
+                        message: "Assign role department: ",
+                        choices: deptArray
+                }
+                
+            ]).then((answers) => {
+                const { roleName, salary, dept } = answers;
+                const insertRoleQuery = 'INSERT INTO role (title, salary, department_id) VALUES (?,?,?)';
+
+                const deptID = deptResults.find(result => result.name === dept).id;
+                
+                const values = [roleName, salary, deptID];
+
+                db.query(insertRoleQuery, values, (err, insertResult) => {
+                    
+                    if (err) {
+                    
+                        throw err;
+
+                    } else {
+    
+                        console.log(`${roleName} added to roles database.`);
+
+                        viewRoles();
+    
+                    }
+    
+                });
+    
+            });
+ 
+        }   
+    });
+
+};
 
 const addDept = () => {
 
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'deptName',
+            message: 'Input department name: ',
+            validate: deptName => {
+            
+                if (deptName) {
+            
+                    return true;
+            
+                } else {
+            
+                    console.log('Please enter a valid department name.');
+            
+                    return false;
+            
+                }
+            
+            }
+        
+        }
+    ]).then((answers) => {
+     
+        const { deptName } = answers;
+     
+        const insertDeptNameQuery = 'INSERT INTO department (name) VALUES (?)';
+     
+        const values = [deptName];
 
+     
+        db.query(insertDeptNameQuery, values, (err, insertResult) => {
+     
+            if (err) {
+     
+                throw err;
+     
+            } else {
+     
+                console.log(`${deptName} added to department database.`);
+     
+                viewDepts();
+     
+            }
+     
+        });
+    
+    });
 
-}
+};
 
 promptUser();
