@@ -58,13 +58,13 @@ const viewEmployees = () => {
     employee.id, 
     employee.first_name, 
     employee.last_name, 
-    role.title AS job_title, 
-    role.salary AS Salary,
+    roles.title AS job_title, 
+    roles.salary AS Salary,
     department.name, 
     CONCAT(manager.first_name, " ", manager.last_name) AS Manager_Name
     FROM employee 
-    JOIN role ON role.id = employee.role_id
-    JOIN department ON department.id = role.department_id
+    JOIN roles ON roles.id = employee.role_id
+    JOIN department ON department.id = roles.department_id
     LEFT JOIN employee AS manager ON employee.manager_id = manager.id`
     
     db.query(viewEmployees, (err, res) => {
@@ -88,12 +88,12 @@ const viewEmployees = () => {
 const viewRoles = () => {
     
     let viewRoles = `SELECT 
-    role.id, 
+    roles.id, 
     title, 
     name, 
     salary 
-    FROM role 
-    JOIN department ON department.id = role.department_id`
+    FROM roles
+    JOIN department ON department.id = roles.department_id`
     
     db.query(viewRoles, (err, results) => {
     
@@ -141,7 +141,7 @@ const viewDepts = () => {
 
 const addEmployee = () => {
 
-    let roleQuery = "SELECT * FROM role";
+    let roleQuery = "SELECT * FROM roles";
 
     db.query(viewRolesQuery, (err, res) => {
 
@@ -149,7 +149,7 @@ const addEmployee = () => {
             throw err;
         } else{
 
-            const roles = res.map(role => role.title);
+            const roles = res.map(roles => roles.title);
 
 
             const managerQuery =  'SELECT * FROM employee';
@@ -218,7 +218,7 @@ const addEmployee = () => {
                         const { firstName, lastName, role, manager } = answers;
                         const insertEmployeeQuery = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)';
 
-                        const roleID = res.find(result => result.title === role).id;                        
+                        const roleID = res.find(result => result.title === roles).id;                        
                         const managerID = manRes.find(result => result.first_name === manager).id;
                         
                         const values = [firstName, lastName, roleID, managerID];
@@ -317,10 +317,10 @@ const addRole = () => {
                         message: "Assign role department: ",
                         choices: deptArray
                 }
-                
+
             ]).then((answers) => {
                 const { roleName, salary, dept } = answers;
-                const insertRoleQuery = 'INSERT INTO role (title, salary, department_id) VALUES (?,?,?)';
+                const insertRoleQuery = 'INSERT INTO roles (title, salary, department_id) VALUES (?,?,?)';
 
                 const deptID = deptResults.find(result => result.name === dept).id;
                 

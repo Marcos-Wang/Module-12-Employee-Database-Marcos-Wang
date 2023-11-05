@@ -5,7 +5,7 @@ VALUES
     ("Development"),
     ("Project Management");
 
-INSERT INTO role (title, salary, department_id)
+INSERT INTO roles (title, salary, department_id)
 VALUES
     ("Network Manager", 120000, 1),
     ("Head of Cyber Security", 150000, 1),

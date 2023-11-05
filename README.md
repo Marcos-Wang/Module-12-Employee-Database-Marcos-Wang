@@ -8,6 +8,11 @@ Because this Challenge will require the use of the `Inquirer` package, ensure th
 
 Because this application won’t be deployed, you’ll also need to create a walkthrough video that demonstrates its functionality and all of the following acceptance criteria being met. You’ll need to submit a link to the video and add it to the README of your project.
 
+
+# Video
+
+[Link to the video here.](https://drive.google.com/file/d/17wQwmddsjo1JvfM1mQIyJy_Fgz5SCDR4/view?usp=sharing)
+
 ## User Story
 
 ```md
